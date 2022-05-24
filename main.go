@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/jackc/pgx/v4"
 )
@@ -10,13 +11,16 @@ import (
 // User is the model present in the database
 type User struct {
 	ID       int    `json:"id"`
-	UserName string `json:"username"`
+	UserName string `json:"UserName"`
 }
 
 func main() {
 
 	// Open up our database connection.
-	conn, _ := pgx.Connect(context.Background(), "postgres://postgres:123@localhost:5432/test")
+	conn, err := pgx.Connect(context.Background(), "postgres://postgres:709177ub@localhost:5432/prim_bd")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// defer the close till after the main function has finished executing
 	defer conn.Close(context.Background())
@@ -35,7 +39,7 @@ func main() {
 
 func InsertUser(u *User, conn *pgx.Conn) {
 	// Executing SQL query for insertion
-	if _, err := conn.Exec(context.Background(), "INSERT INTO USERS(USERNAME) VALUES($1)", u.UserName); err != nil {
+	if _, err := conn.Exec(context.Background(), `INSERT INTO users("UserName") VALUES($1)`, u.UserName); err != nil {
 		// Handling error, if occur
 		fmt.Println("Unable to insert due to: ", err)
 		return
